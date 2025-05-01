@@ -1,19 +1,19 @@
 package com.blog.request;
 
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
+@Getter
+@ToString
 public class PostCreate {
 
+    @NotBlank(message = "title은 필수입니다.")
     private String title;
-    private String content;
-    
 
-    @Override
-    public String toString() {
-        return "PostCreate{" +
-            "title='" + title + '\'' +
-            ", content='" + content + '\'' +
-            '}';
-    }
+    @NotBlank(message = "content는 필수입니다.")
+    private String content;
+
 }

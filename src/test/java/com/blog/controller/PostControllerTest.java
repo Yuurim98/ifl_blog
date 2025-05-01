@@ -26,13 +26,26 @@ class PostControllerTest {
     }
 
     @Test
+    @DisplayName("/posts 요청 시 빈값을 출력한다")
     void post() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"title\" : \"글 제목\", \"content\" : \"글 내용~!\"}")
             )
             .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.content().string("hello"))
+            .andExpect(MockMvcResultMatchers.content().string("{}"))
+            .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("/posts 요청 시 title 값은 필수이다")
+    void post2() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/posts")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\" : \"\", \"content\" : \"글 내용~!\"}")
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("title은 필수입니다."))
             .andDo(MockMvcResultHandlers.print());
     }
 
