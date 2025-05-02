@@ -25,6 +25,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 class PostControllerTest {
 
     @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
@@ -48,25 +51,35 @@ class PostControllerTest {
     @DisplayName("/posts 요청 시 빈값을 출력한다")
     void post() throws Exception {
         // given
-        PostCreate postCreate = new PostCreate("글 제목", "글 내용~!");
-        ObjectMapper objectMapper = new ObjectMapper();
+        PostCreate postCreate = PostCreate.builder()
+            .title("글 제목")
+            .content("글 내용~!")
+            .build();
+
         String json = objectMapper.writeValueAsString(postCreate);
-        
+
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
                 .contentType(APPLICATION_JSON)
                 .content(json)
             )
             .andExpect(status().isOk())
-            .andExpect(content().string("{}"))
+            .andExpect(content().string(""))
             .andDo(print());
     }
 
     @Test
     @DisplayName("/posts 요청 시 title 값은 필수이다")
     void post2() throws Exception {
+        // given
+        PostCreate postCreate = PostCreate.builder()
+            .content("글 내용~!")
+            .build();
+
+        String json = objectMapper.writeValueAsString(postCreate);
+
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
                 .contentType(APPLICATION_JSON)
-                .content("{\"title\" : \"\", \"content\" : \"글 내용~!\"}")
+                .content(json)
             )
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("400"))
@@ -78,10 +91,18 @@ class PostControllerTest {
     @Test
     @DisplayName("/posts 요청 시 db에 값이 저장된다")
     void post3() throws Exception {
+        // given
+        PostCreate postCreate = PostCreate.builder()
+            .title("글 제목")
+            .content("글 내용~!")
+            .build();
+
+        String json = objectMapper.writeValueAsString(postCreate);
+
         // when
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
                 .contentType(APPLICATION_JSON)
-                .content("{\"title\" : \"글 제목\", \"content\" : \"글 내용~!\"}")
+                .content(json)
             )
             .andExpect(status().isOk())
             .andDo(print());

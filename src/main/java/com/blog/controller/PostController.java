@@ -3,7 +3,6 @@ package com.blog.controller;
 import com.blog.request.PostCreate;
 import com.blog.service.PostService;
 import jakarta.validation.Valid;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +23,7 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public Map<String, String> post(@RequestBody @Valid PostCreate postCreate) {
+    public void post(@RequestBody @Valid PostCreate postCreate) {
         postService.write(postCreate);
-        return Map.of();
     }
 }
