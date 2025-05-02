@@ -1,19 +1,24 @@
 package com.blog.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.blog.domain.Post;
 import com.blog.repository.PostRepository;
-import org.junit.jupiter.api.Assertions;
+import com.blog.request.PostCreate;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,35 +39,40 @@ class PostControllerTest {
     @DisplayName("/posts 요청 시 hello를 출력한다")
     void get() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/posts"))
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.content().string("hello"))
-            .andDo(MockMvcResultHandlers.print());
+            .andExpect(status().isOk())
+            .andExpect(content().string("hello"))
+            .andDo(print());
     }
 
     @Test
     @DisplayName("/posts 요청 시 빈값을 출력한다")
     void post() throws Exception {
+        // given
+        PostCreate postCreate = new PostCreate("글 제목", "글 내용~!");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(postCreate);
+        
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\" : \"글 제목\", \"content\" : \"글 내용~!\"}")
+                .contentType(APPLICATION_JSON)
+                .content(json)
             )
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andExpect(MockMvcResultMatchers.content().string("{}"))
-            .andDo(MockMvcResultHandlers.print());
+            .andExpect(status().isOk())
+            .andExpect(content().string("{}"))
+            .andDo(print());
     }
 
     @Test
     @DisplayName("/posts 요청 시 title 값은 필수이다")
     void post2() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(APPLICATION_JSON)
                 .content("{\"title\" : \"\", \"content\" : \"글 내용~!\"}")
             )
-            .andExpect(MockMvcResultMatchers.status().isBadRequest())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("400"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("잘못된 요청입니다."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.validation.title").value("title은 필수입니다."))
-            .andDo(MockMvcResultHandlers.print());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+            .andExpect(jsonPath("$.validation.title").value("title은 필수입니다."))
+            .andDo(print());
     }
 
     @Test
@@ -70,18 +80,18 @@ class PostControllerTest {
     void post3() throws Exception {
         // when
         mockMvc.perform(MockMvcRequestBuilders.post("/posts")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(APPLICATION_JSON)
                 .content("{\"title\" : \"글 제목\", \"content\" : \"글 내용~!\"}")
             )
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andDo(MockMvcResultHandlers.print());
+            .andExpect(status().isOk())
+            .andDo(print());
 
         // then
-        Assertions.assertEquals(1, postRepository.count());
+        assertEquals(1, postRepository.count());
 
         Post post = postRepository.findAll().get(0);
-        Assertions.assertEquals("글 제목", post.getTitle());
-        Assertions.assertEquals("글 내용~!", post.getContent());
+        assertEquals("글 제목", post.getTitle());
+        assertEquals("글 내용~!", post.getContent());
     }
 
 

@@ -16,4 +16,8 @@ public class PostCreate {
     @NotBlank(message = "content는 필수입니다.")
     private String content;
 
+    public PostCreate(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
