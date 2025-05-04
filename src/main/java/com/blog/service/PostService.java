@@ -22,4 +22,9 @@ public class PostService {
         postRepository.save(post);
     }
 
+    public Post get(Long postId) {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new IllegalArgumentException("글이 존재하지 않습니다."));
+        return post;
+    }
 }
