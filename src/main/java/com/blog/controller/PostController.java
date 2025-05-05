@@ -19,11 +19,6 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/posts")
-    public String get() {
-        return "hello";
-    }
-
     @PostMapping("/posts")
     public void post(@RequestBody @Valid PostCreate postCreate) {
         postService.write(postCreate);

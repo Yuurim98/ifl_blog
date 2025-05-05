@@ -39,15 +39,6 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청 시 hello를 출력한다")
-    void get() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/posts"))
-            .andExpect(status().isOk())
-            .andExpect(content().string("hello"))
-            .andDo(print());
-    }
-
-    @Test
     @DisplayName("/posts 요청 시 빈값을 출력한다")
     void post() throws Exception {
         // given
