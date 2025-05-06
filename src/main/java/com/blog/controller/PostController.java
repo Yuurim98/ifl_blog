@@ -1,7 +1,7 @@
 package com.blog.controller;
 
-import com.blog.domain.Post;
 import com.blog.request.PostCreate;
+import com.blog.response.PostResponse;
 import com.blog.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ public class PostController {
 
     // 엔티티를 바로 반환하는 중
     @GetMapping("/posts/{postId}")
-    public Post getPost(@PathVariable Long postId) {
-        Post post = postService.get(postId);
-        return post;
+    public PostResponse getPost(@PathVariable Long postId) {
+        PostResponse response = postService.get(postId);
+        return response;
     }
 }
