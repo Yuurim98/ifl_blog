@@ -24,6 +24,7 @@ public class PostController {
         postService.write(postCreate);
     }
 
+    // 엔티티를 바로 반환하는 중
     @GetMapping("/posts/{postId}")
     public Post getPost(@PathVariable Long postId) {
         Post post = postService.get(postId);
