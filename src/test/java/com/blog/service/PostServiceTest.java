@@ -7,6 +7,7 @@ import com.blog.domain.Post;
 import com.blog.repository.PostRepository;
 import com.blog.request.PostCreate;
 import com.blog.response.PostResponse;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +67,28 @@ class PostServiceTest {
         assertEquals(1, postRepository.count());
         assertEquals("제목", response.getTitle());
         assertEquals("내용", response.getContent());
+    }
 
+    @Test
+    @DisplayName("글 여러개 조회")
+    void test3() {
+        // given
+        Post requestPost1 = Post.builder()
+            .title("제목1")
+            .content("내용1")
+            .build();
+        postRepository.save(requestPost1);
 
+        Post requestPost2 = Post.builder()
+            .title("제목2")
+            .content("내용2")
+            .build();
+        postRepository.save(requestPost2);
+
+        // when
+        List<PostResponse> posts = postService.getList();
+
+        // then
+        assertEquals(2, posts.size());
     }
 }

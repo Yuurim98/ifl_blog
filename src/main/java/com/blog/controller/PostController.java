@@ -4,6 +4,7 @@ import com.blog.request.PostCreate;
 import com.blog.response.PostResponse;
 import com.blog.service.PostService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +25,13 @@ public class PostController {
         postService.write(postCreate);
     }
 
-    // 엔티티를 바로 반환하는 중
     @GetMapping("/posts/{postId}")
     public PostResponse getPost(@PathVariable Long postId) {
         return postService.get(postId);
+    }
+
+    @GetMapping("/posts")
+    public List<PostResponse> getList() {
+        return postService.getList();
     }
 }

@@ -4,6 +4,8 @@ import com.blog.domain.Post;
 import com.blog.repository.PostRepository;
 import com.blog.request.PostCreate;
 import com.blog.response.PostResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,5 +34,11 @@ public class PostService {
             .title(post.getTitle())
             .content(post.getContent())
             .build();
+    }
+
+    public List<PostResponse> getList() {
+        return postRepository.findAll().stream()
+            .map(PostResponse::new)
+            .collect(Collectors.toList());
     }
 }
