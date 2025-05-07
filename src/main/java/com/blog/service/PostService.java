@@ -27,11 +27,10 @@ public class PostService {
         Post post = postRepository.findById(postId)
             .orElseThrow(() -> new IllegalArgumentException("글이 존재하지 않습니다."));
 
-        PostResponse postResponse = PostResponse.builder()
+        return PostResponse.builder()
             .id(post.getId())
             .title(post.getTitle())
             .content(post.getContent())
             .build();
-        return postResponse;
     }
 }
