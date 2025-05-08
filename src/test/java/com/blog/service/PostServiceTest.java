@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.blog.domain.Post;
 import com.blog.repository.PostRepository;
 import com.blog.request.PostCreate;
+import com.blog.request.PostSearch;
 import com.blog.response.PostResponse;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,10 +17,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 
 @SpringBootTest
 class PostServiceTest {
@@ -79,7 +76,7 @@ class PostServiceTest {
     @DisplayName("글 1페이지 조회")
     void test3() {
         // given
-        List<Post> requestPosts = IntStream.range(1, 31)
+        List<Post> requestPosts = IntStream.range(0, 20)
             .mapToObj(i -> Post.builder()
                 .title("제목 - " + i)
                 .content("내용 - " + i)
@@ -88,14 +85,16 @@ class PostServiceTest {
 
         postRepository.saveAll(requestPosts);
 
-        Pageable pageable = PageRequest.of(0, 5, Sort.by(Direction.DESC, "id"));
+        PostSearch postSearch = PostSearch.builder()
+            .page(1)
+            .size(10)
+            .build();
 
         // when
-        List<PostResponse> posts = postService.getList(pageable);
+        List<PostResponse> posts = postService.getList(postSearch);
 
         // then
-        assertEquals(5, posts.size());
-        assertEquals("제목 - 30", posts.get(0).getTitle());
-        assertEquals("제목 - 26", posts.get(4).getTitle());
+        assertEquals(10, posts.size());
+        assertEquals("제목 - 19", posts.get(0).getTitle());
     }
 }
